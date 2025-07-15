@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 
 import connectDB from './config/connectDB.js';
+import userRouter from './routes/user.routes.js';
 
 const app = express();
 
@@ -31,6 +32,9 @@ const PORT = process.env.PORT || 8080;
 app.get('/', (req, res) => {
   res.json({ message: 'Server is working!' });
 });
+
+// routes
+app.use('/api/user', userRouter);
 
 // connection to DB
 connectDB().then(() => {
