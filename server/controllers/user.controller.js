@@ -4,6 +4,7 @@ import bcryptjs from 'bcryptjs';
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
 import generatedAccessToken from '../utils/generatedAccessToken.js';
 import generateRefreshToken from '../utils/generateRefreshToken.js';
+import uploadImageCloudinary from '../utils/uploadImageCloudinary.js';
 
 export const registerUserController = async (req, res) => {
   try {
@@ -111,7 +112,7 @@ export const loginController = async (req, res) => {
       return res.status(400).json({
         message: 'Email and password are required!',
         error: true,
-        success: false
+        success: false,
       });
     }
 
@@ -161,6 +162,62 @@ export const loginController = async (req, res) => {
         accessToken,
         refreshToken,
       },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const logoutController = async (req, res) => {
+  try {
+    const userid = req.userId;
+    const cookieOption = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+    };
+
+    res.clearCookie('accessToken', cookieOption);
+    res.clearCookie('refreshToken', cookieOption);
+
+    const removeRefreshToken = await UserModel.findByIdAndUpdate(userid, {
+      refresh_token: '',
+    });
+
+    return res.json({
+      message: 'Logout successfully',
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const uploadAvatar = async (req, res) => {
+  try {
+    const userId = req.userId; // auth middleware
+    const image = req.file; // multer middleware
+
+    const upload = await uploadImageCloudinary(image);
+
+    const updeteUser = await UserModel.findByIdAndUpdate(userId, {
+      avatar: upload.url,
+    });
+    return res.json({
+      message: 'upload profile',
+      data: {
+        _id: userId,
+        avatar: upload.url
+      }
     });
   } catch (error) {
     return res.status(500).json({
