@@ -6,6 +6,7 @@ import generatedAccessToken from '../utils/generatedAccessToken.js';
 import generateRefreshToken from '../utils/generateRefreshToken.js';
 import uploadImageCloudinary from '../utils/uploadImageCloudinary.js';
 
+// register controller
 export const registerUserController = async (req, res) => {
   try {
     // Destructuring
@@ -71,6 +72,7 @@ export const registerUserController = async (req, res) => {
   }
 };
 
+// verify email
 export const verifyEmailController = async (req, res) => {
   try {
     const { code } = req.body;
@@ -104,6 +106,7 @@ export const verifyEmailController = async (req, res) => {
   }
 };
 
+// login controller
 export const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -172,6 +175,7 @@ export const loginController = async (req, res) => {
   }
 };
 
+// logout controller
 export const logoutController = async (req, res) => {
   try {
     const userid = req.userId;
@@ -202,6 +206,7 @@ export const logoutController = async (req, res) => {
   }
 };
 
+// upload user avatar
 export const uploadAvatar = async (req, res) => {
   try {
     const userId = req.userId; // auth middleware
@@ -216,8 +221,41 @@ export const uploadAvatar = async (req, res) => {
       message: 'upload profile',
       data: {
         _id: userId,
-        avatar: upload.url
-      }
+        avatar: upload.url,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// update user details
+export const updateUserDetails = async (req, res) => {
+  try {
+    const userId = req.userId; // auth middleware
+    const { name, email, mobile, password } = req.body;
+
+    let hashPassword = '';
+    if (password) {
+      const salt = await bcryptjs.genSalt(10);
+      hashPassword = await bcryptjs.hash(password, salt);
+    }
+    const updateUser = await UserModel.findByIdAndUpdate(userId, {
+      ...(name && { name: name }),
+      ...(email && { email: email }),
+      ...(mobile && { mobile: mobile }),
+      ...(password && { password: hashPassword }),
+    }, {new: true});
+
+    return res.json({
+      message: 'Updated user successfully',
+      error: false,
+      success: true,
+      data: updateUser,
     });
   } catch (error) {
     return res.status(500).json({
