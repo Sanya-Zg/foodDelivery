@@ -1,2 +1,23 @@
-server/.env
-server/node_modules
+# Node
+**/node_modules
+*.log
+npm-debug.log
+yarn-debug.log
+pnpm-debug.log
+
+# Builds
+dist
+*.local
+
+# Env files
+.env
+
+# Editor config
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.njsproj
+*.sln
+*.sw?
