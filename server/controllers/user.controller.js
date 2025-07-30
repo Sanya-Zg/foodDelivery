@@ -152,6 +152,10 @@ export const loginController = async (req, res) => {
     const accessToken = await generatedAccessToken(user._id);
     const refreshToken = await generateRefreshToken(user._id);
 
+    const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+      last_login_date: new Date(),
+    });
+
     const cookieOption = {
       httpOnly: true,
       secure: true,
@@ -357,6 +361,11 @@ export const verifyForgotPasswordOTP = async (req, res) => {
       });
     }
 
+    const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+      forgot_password_otp: '',
+      forgot_password_expiry: '',
+    });
+
     return res.json({
       message: 'OTP verification successful',
       error: false,
@@ -462,12 +471,35 @@ export const refreshToken = async (req, res) => {
       error: false,
       success: true,
       data: {
-        accessToken: newAccessToken
-      }
-    })
+        accessToken: newAccessToken,
+      },
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// get login user details
+export const userDetails = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await UserModel.findById(userId).select(
+      '-password -refresh_token',
+    );
+
+    return res.json({
+      message: 'user details',
+      data: user,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Someting is wrong',
       error: true,
       success: false,
     });
