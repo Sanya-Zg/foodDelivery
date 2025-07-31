@@ -6,6 +6,8 @@ import { IoCartOutline } from 'react-icons/io5';
 import useMobile from '../hooks/useMobile';
 import { useSelector } from 'react-redux';
 import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
+import { useState } from 'react';
+import UserMenu from './UserMenu';
 
 const Header = () => {
   const [isMobile] = useMobile();
@@ -13,8 +15,9 @@ const Header = () => {
   const isSearchPage = location.pathname === '/search';
   const navigate = useNavigate();
   const user = useSelector((state) => state?.user);
+  const [openUserMenu, setOpenUserMenu] = useState(false);
 
-  console.log('user from store', user);
+  // console.log('user from store', user);
 
   const redirectToLoginPage = () => {
     navigate('/login');
@@ -54,11 +57,16 @@ const Header = () => {
             </button>
             <div className="hidden lg:flex items-center gap-10">
               {user?._id ? (
-                <div>
-                  <div className="flex items-center gap-2">
+                <div className="relative">
+                  <div className="flex items-center gap-1 cursor-pointer">
                     <p>Account</p>
-                    <GoTriangleDown />
+                    <GoTriangleDown size={25}/>
                     {/* <GoTriangleUp/> */}
+                  </div>
+                  <div className="absolute right-0 top-12">
+                    <div className="bg-white rounded p-4 min-w-52 lg:shadow-lg">
+                      <UserMenu />
+                    </div>
                   </div>
                 </div>
               ) : (

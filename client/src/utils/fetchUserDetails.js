@@ -1,5 +1,5 @@
 import Axios from './Axios';
-import SummaryApi from '../common/SummaryApi';
+import SummaryApi from '../common/SummaryApi.js';
 
 const fetchUserDetails = async () => {
   try {
