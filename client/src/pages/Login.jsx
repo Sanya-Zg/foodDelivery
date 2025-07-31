@@ -6,6 +6,9 @@ import SummaryApi from '../common/summaryApi';
 import Axios from '../utils/Axios';
 import AxiosToastError from '../utils/AxiosToastError';
 import { Link, useNavigate } from 'react-router-dom';
+import fetchUserDetails from '../utils/fetchUserDetails';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../store/userSlice';
 
 const Login = () => {
   const [data, setData] = useState({
@@ -14,6 +17,7 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,6 +48,9 @@ const Login = () => {
         toast.success(response.data.message);
         localStorage.setItem('accessToken', response.data.data.accessToken);
         localStorage.setItem('refreshToken', response.data.data.refreshToken);
+
+        const userDetails = await fetchUserDetails();
+        dispatch(setUserDetails(userDetails.data));
         setData({
           email: '',
           password: '',
@@ -58,10 +65,9 @@ const Login = () => {
   return (
     <section className="w-full container mx-auto px-2">
       <div className="bg-white my-4 w-full max-w-lg mx-auto rounded p-7">
-        <p className='font-bold text-2xl'>Log in</p>
+        <p className="font-bold text-2xl">Log in</p>
 
         <form className="grid gap-2 mt-6" onSubmit={handleSubmit}>
-          
           <div className="grid gap-1">
             <label htmlFor="email">Email:</label>
             <input
@@ -93,9 +99,14 @@ const Login = () => {
                 {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
               </div>
             </div>
-            <Link to={'/forgot-password'} className='block ml-auto hover:text-primary-200'>Forgot password?</Link>
+            <Link
+              to={'/forgot-password'}
+              className="block ml-auto hover:text-primary-200"
+            >
+              Forgot password?
+            </Link>
           </div>
-          
+
           <button
             disabled={!valideValue}
             className={`${

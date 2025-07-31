@@ -22,6 +22,10 @@ const Header = () => {
   const redirectToLoginPage = () => {
     navigate('/login');
   };
+
+  const handleCloseUserMenu = () => {
+    setOpenUserMenu(false);
+  };
   return (
     <header className="h-24 lg:h-20 lg:shadow-md sticky top-0 flex flex-col justify-center gap-1 bg-white">
       {!(isSearchPage && isMobile) && (
@@ -58,16 +62,24 @@ const Header = () => {
             <div className="hidden lg:flex items-center gap-10">
               {user?._id ? (
                 <div className="relative">
-                  <div className="flex items-center gap-1 cursor-pointer">
+                  <div
+                    onClick={() => setOpenUserMenu((prev) => !prev)}
+                    className="flex select-none  items-center gap-1 cursor-pointer"
+                  >
                     <p>Account</p>
-                    <GoTriangleDown size={25}/>
-                    {/* <GoTriangleUp/> */}
+                    {openUserMenu ? (
+                      <GoTriangleUp size={25} />
+                    ) : (
+                      <GoTriangleDown size={25} />
+                    )}
                   </div>
-                  <div className="absolute right-0 top-12">
-                    <div className="bg-white rounded p-4 min-w-52 lg:shadow-lg">
-                      <UserMenu />
+                  {openUserMenu && (
+                    <div className="absolute right-0 top-12">
+                      <div className="bg-white rounded p-4 min-w-52 lg:shadow-lg">
+                        <UserMenu close={handleCloseUserMenu} />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <button onClick={redirectToLoginPage} className="text-lg px-2">
