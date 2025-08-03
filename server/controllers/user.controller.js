@@ -226,6 +226,8 @@ export const uploadAvatar = async (req, res) => {
     });
     return res.json({
       message: 'upload profile',
+      error: false,
+      success: true,
       data: {
         _id: userId,
         avatar: upload.url,
@@ -263,7 +265,7 @@ export const updateUserDetails = async (req, res) => {
     );
 
     return res.json({
-      message: 'Updated user successfully',
+      message: 'Updated successfully',
       error: false,
       success: true,
       data: updateUser,
